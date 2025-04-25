@@ -105,21 +105,8 @@ const produtos = [
     </div>
   </header>
   <body>
-    <section class="listalivros">
-    <h1>Lista de Livros</h1>
-    <div v-for="produto in produtos" :key="produto.id" class="livro">
-      <img :src="produto.capa" alt="" width="100%" height="100%" />
-      <h2>{{ produto.titulo }}</h2>
-      <p class="res">{{ produto.resenha }}</p>
-        <strong>R$ {{ produto.preco.toFixed(2) }}</strong>
-        <br>
-      <button class="compra">
-            <i class="fa-solid fa-cart-shopping"></i>
-            <p>comprar</p>
-      </button>      
-    </div>
-  </section>
-  
+
+    
     <section class="autorL">
       <div class="sobreA">
         <p class="autor">Autor de Abril</p>
@@ -154,6 +141,21 @@ const produtos = [
         <p>Mais vendidos</p>
       </div>
     </section>
+    <section class="listalivros">
+    <h1>Lista de Livros</h1>
+    <div v-for="produto in produtos" :key="produto.id" class="livro">
+      <img :src="produto.capa" alt="" width="100%" height="100%" />
+      <h2>{{ produto.titulo }}</h2>
+      <p class="res">{{ produto.resenha }}</p>
+        <strong>R$ {{ produto.preco.toFixed(2) }}</strong>
+        <br>
+      <button class="compra">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <p>comprar</p>
+      </button>      
+    </div>
+  </section>
+  
     
   </body>
   
