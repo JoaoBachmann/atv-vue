@@ -1,6 +1,6 @@
 <script setup>
-import { reactive } from "vue";
-const produtos = reactive([
+import { ref, reactive } from "vue";
+const produtos = [
   {
     id: 1,
     titulo: 'Chain of Iron: Volume 2',
@@ -57,8 +57,7 @@ const produtos = reactive([
     preco: 15.81,
     capa: 'https://m.media-amazon.com/images/I/71Xy4AL7jKL.jpg',
   }
-]);
-
+];
 
 const carrinho = reactive({
   items: [
@@ -66,17 +65,28 @@ const carrinho = reactive({
       id: 1,
       titulo: 'Chain of Iron: Volume 2',
       resenha: 'Cassandra Clare',
-      preco: 23.24,
+      preco: ref(23.24),
       capa: 'https://cdn.kobo.com/book-images/6db37b19-2d7d-4e5b-a1d8-b006188c9db4/1200/1200/False/the-last-hours-chain-of-iron.jpg',
+      quantidade: ref(1),
+    },
+    {
+      id: 2,
+      titulo: 'Chain of Iron: Volume 2',
+      resenha: 'Cassandra Clare',
+      preco: ref(23.24),
+      capa: 'https://cdn.kobo.com/book-images/6db37b19-2d7d-4e5b-a1d8-b006188c9db4/1200/1200/False/the-last-hours-chain-of-iron.jpg',
+      quantidade: ref(1),
     }
-  ]});
-  
-function adicionarCarrinho(produto) {
-  adicionarCarrinho(produto) {
-    // Adiciona o produto no carrinho
-    this.carrinho.push(produto);
-    alert(`Produto ${produto.titulo} adicionado ao carrinho!`);
+  ]
+});
+function decrementar(item) {
+  if (item.quantidade > 1) {
+    item.quantidade--
   }
+}
+
+function incrementar(item) {
+  item.quantidade++
 }
 </script>
 
@@ -127,6 +137,42 @@ function adicionarCarrinho(produto) {
   </header>
 
   <body>
+
+
+    <section class="autorL">
+      <div class="sobreA">
+        <p class="autor">Autor de Abril</p>
+        <h2 class="negrito">Eric-Emanuel Schmitt</h2>
+        <p class="texto">
+          Eric-Emmanuel Schmitt has been awarded more than 20 literary prizes and distinctions, and
+          in 2001 he received the title of Chevalier des Arts et des Lettres. His books have been
+          translated into over 40 languages.
+        </p>
+        <button>
+          <a href="#"></a>
+          Acessar página do livro</button>
+      </div>
+
+      <div class="fotoLivro">
+        <img src="/public/Imagens/book.png" alt="livro" />
+        <p>*within the stock limit</p>
+      </div>
+    </section>
+
+    <section class="opcoes">
+      <div class="linha">
+        <span class="fa-solid fa-truck"></span>
+        <p>Frete grátis para SC</p>
+      </div>
+      <div class="linha">
+        <span class="fa-solid fa-star"></span>
+        <p>Livros recomendados</p>
+      </div>
+      <div>
+        <span class="fa-solid fa-book-open"></span>
+        <p>Mais vendidos</p>
+      </div>
+    </section>
     <section class="listalivros">
       <h1>Lista de Livros</h1>
       <div v-for="produto in produtos" :key="produto.id" class="livro">
@@ -135,7 +181,7 @@ function adicionarCarrinho(produto) {
         <p class="res">{{ produto.resenha }}</p>
         <strong>R$ {{ produto.preco.toFixed(2) }}</strong>
         <br>
-        <button class="compra" v-on:click="adicionarCarrinho">
+        <button class="compra">
           <i class="fa-solid fa-cart-shopping"></i>
           <p>comprar</p>
         </button>
@@ -154,20 +200,60 @@ function adicionarCarrinho(produto) {
           subtotal
         </h2>
       </div>
-      <div v-for="item in carrinho" :key="item.id">
+      <div v-for="item in carrinho.items" :key="item.id" class="itensCarrinhos">
         <div>
-          <img :src="item.capa" alt="Capa do livro" width="100%" height="100%">
+          <img :src="item.capa" alt="">
+        <div>
+          <h2>{{ item.titulo }}</h2>
+          <p>{{ item.resenha }}</p>
+          <strong>R$ {{ item.preco.toFixed(2) }}</strong>
         </div>
-        <h2>{{ item.titulo }}</h2>
-        <p>{{ item.resenha }}</p>
-        <strong>R$ {{ item.preco.toFixed(2) }}</strong>
+        </div>
+          
+        <div>
+          <button @click="decrementar(item)">-</button>
+          <strong>{{ item.quantidade }}</strong>
+          <button @click="incrementar(item)">+</button>
+        </div>
+        <strong class="preço">{{ (item.preco * item.quantidade).toFixed(2) }}</strong>
       </div>
     </section>
-
   </body>
+  <footer>
+    <div class="pe">
+      <div class="unha">
+        <p>IFbooks</p>
+        <i class="fa-brands fa-square-facebook"></i>
+        <i class="fa-brands fa-square-instagram"></i>
+        <i class="fa-brands fa-square-x-twitter"></i>
+      </div>
+      <div class="ifbook">
+        <p>Contato</p>
+        <div class="redes">
+          <i class="fa-solid fa-phone"> </i>
+          <p>+55 47 40045263</p>
+        </div>
+        <div class="redes">
+          <i class="fa-solid fa-clock"> </i>
+          <p>8h às 23h - Seg a Sex</p>
+        </div>
+        <div class="redes">
+          <i class="fa-solid fa-envelope"></i>
+          <p>contato@ifbooks.com</p>
+        </div>
+        <div class="img">
+          <img src="../public/Imagens/paipal 1.png" alt="paypal">
+          <img src="../public/Imagens/MasterCard-Logo-1979 1.png" alt="Master Card">
+          <img src="../public/Imagens/VISA-card-logo- 1.png" alt="Visa">
+        </div>
+      </div>
+    </div>
+    <div class="theLast">
+      <P>© Alguns direitos reservados. IFbooks 2025. </P>
+    </div>
+  </footer>
 
 </template>
-
 <style scoped>
 /*                   GERAL                      */
 li {
@@ -176,8 +262,10 @@ li {
 
 * {
   font-family: 'SuaFonte', sans-serif;
+  /* Substitua 'SuaFonte' pela fonte que você quer */
 }
 
+/* Garantindo que os ícones Font Awesome usem sua própria fonte */
 i,
 .fa {
   font-family: 'Font Awesome 5 Free', 'Font Awesome 5 Free Solid', 'FontAwesome', sans-serif !important;
@@ -205,7 +293,7 @@ div.titulo p.um {
 
 div.titulo p.dois {
   word-break: normal;
-  border-left: 2px solid #27AE60;
+  border-left: 2px solid;
   padding-left: 1vw;
   color: #27AE60;
 }
@@ -326,14 +414,181 @@ section.carrinho div.titulos {
   justify-content: space-between;
   margin: 6vw 8vw 0 8vw;
   border-bottom: 2px solid #27AE60;
-}
-
-section.carrinho div.titulos h2 {
-  font-size: 2rem;
 
 }
+section.carrinho div.itensCarrinhos {
+  display: flex;
+  margin: 4vw 8vw 4vw 8vw ;
+  border-bottom: 1px solid grey;
+  padding-bottom: 3vw;
+  justify-content: space-between;
+}
+section.carrinho div.itensCarrinhos div.tit {
+  display: flex;
+}
+.carrinho div.itensCarrinhos img {
+  width: 1vw;
+}
 
-section.carrinho div.titulos h2.qnt {
-  margin-left: 10vw;
+.carrinhos div {
+  
+}
+
+.carrinhos h2 {
+  
+}
+
+.carrinhos p {
+  
+}
+
+.carrinhos strong {
+  
+}
+
+.carrinhos div button {
+ 
+}
+
+
+.carrinhos .preço {
+  
+}
+
+
+/*SECTION AUTOR*/
+
+.autorL {
+  display: flex;
+  align-items: center;
+  padding: 0 10vw;
+}
+
+.texto {
+  font-size: 1.1vw;
+}
+
+.sobreA {
+  color: grey;
+  font-size: 1.01vw;
+  padding: 0 15vw 0 0;
+}
+
+.sobreA .autor {
+  background-color: white;
+  color: #27ae60;
+  border: 1px solid;
+  width: 20%;
+  padding: 0.5vw;
+}
+
+.sobreA .negrito {
+  color: black;
+  font-size: 3vw;
+}
+
+.sobreA button {
+  font-size: 1.1vw;
+  background-color: #27ae60;
+  color: white;
+  border-color: #27ae60;
+  padding: 20px;
+}
+
+/*DIV FOTO LIVRO*/
+
+.fotoLivro p {
+  padding: 0 0 0 15vw;
+
+}
+
+/*Section OPCOES*/
+.opcoes {
+  padding: 3vw 0;
+  display: flex;
+  justify-content: space-between;
+  border-top: 2px solid #27ae60;
+  border-bottom: 2px solid #27ae60;
+}
+
+.opcoes div {
+  padding: 0 10vw 0;
+  display: flex;
+  align-items: center;
+  /* Alinha verticalmente */
+  gap: 1vw;
+  /* Espaço entre o ícone e o texto */
+  font-size: 1.2vw;
+  font-weight: bolder;
+}
+
+.linha {
+  border-right: 1px solid grey;
+}
+
+/*FOOTER*/
+footer {
+  background-color: #27ae60;
+}
+
+.pe {
+  display: flex;
+  justify-content: space-between;
+}
+
+.pe {
+  padding: 1.5vw 5vw;
+  border-bottom: 1px solid white;
+}
+
+/*lado esquerdo*/
+.pe .unha {
+  color: white;
+  font-size: 1.2vw;
+}
+
+.pe .unha i {
+  padding: 0 7px 0 0;
+}
+
+/*lado direito*/
+.ifbook p {
+  color: white;
+  font-size: 1.1vw;
+}
+
+.ifbook i {
+  color: white;
+  font-size: 1.1vw;
+}
+
+.ifbook .redes {
+  display: flex;
+  align-items: center;
+  /* Alinha verticalmente */
+}
+
+.redes i {
+  padding: 0 10px 0 0;
+}
+
+/*cartoes*/
+.img {
+  padding: 2vw 0;
+}
+
+.img img {
+  padding: 0 0.5vw;
+}
+
+/*theLast*/
+
+
+.theLast {
+  color: #FFFFFF;
+  font-size: 1.2vw;
+  display: flex;
+  justify-content: center;
+  padding: 2vw;
 }
 </style>
