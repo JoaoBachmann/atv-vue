@@ -1,6 +1,6 @@
 <script setup>
-import { ref, reactive } from "vue";
-const produtos = [
+import { ref, reactive, computed } from "vue";
+const produtos = reactive([
   {
     id: 1,
     titulo: 'Chain of Iron: Volume 2',
@@ -57,7 +57,7 @@ const produtos = [
     preco: 15.81,
     capa: 'https://m.media-amazon.com/images/I/71Xy4AL7jKL.jpg',
   }
-];
+]);
 
 const carrinho = reactive({
   items: [
@@ -65,20 +65,22 @@ const carrinho = reactive({
       id: 1,
       titulo: 'Chain of Iron: Volume 2',
       resenha: 'Cassandra Clare',
-      preco: ref(23.24),
+      preco: 23.24,
       capa: 'https://cdn.kobo.com/book-images/6db37b19-2d7d-4e5b-a1d8-b006188c9db4/1200/1200/False/the-last-hours-chain-of-iron.jpg',
-      quantidade: ref(1),
+      quantidade: 1,
     },
     {
       id: 2,
       titulo: 'Chain of Iron: Volume 2',
       resenha: 'Cassandra Clare',
-      preco: ref(23.24),
+      preco: 23.24,
       capa: 'https://cdn.kobo.com/book-images/6db37b19-2d7d-4e5b-a1d8-b006188c9db4/1200/1200/False/the-last-hours-chain-of-iron.jpg',
-      quantidade: ref(1),
-    }
+      quantidade: 1,
+    },
+
   ]
 });
+
 function decrementar(item) {
   if (item.quantidade > 1) {
     item.quantidade--
@@ -88,6 +90,28 @@ function decrementar(item) {
 function incrementar(item) {
   item.quantidade++
 }
+function adicionar(item) {
+  carrinho.items.push({ ...item, quantidade: 1 })
+}
+
+function totalCarrinho() {
+  let total = 0;
+  for (let item of carrinho.items) {
+    total += item.preco * item.quantidade;
+  }
+  return total.toFixed(2);
+}
+function quantidadeCarrinho() {
+  let quanti = 0;
+  for (let item of carrinho.items) {
+    quanti += item.quantidade;
+  }
+  return quanti;
+}
+
+
+
+
 </script>
 
 <template>
@@ -181,7 +205,7 @@ function incrementar(item) {
         <p class="res">{{ produto.resenha }}</p>
         <strong>R$ {{ produto.preco.toFixed(2) }}</strong>
         <br>
-        <button class="compra">
+        <button class="compra" @click="adicionar(produto)">
           <i class="fa-solid fa-cart-shopping"></i>
           <p>comprar</p>
         </button>
@@ -201,22 +225,47 @@ function incrementar(item) {
         </h2>
       </div>
       <div v-for="item in carrinho.items" :key="item.id" class="itensCarrinhos">
-        <div>
+        <div class="carrinhoMaior">
           <img :src="item.capa" alt="">
-        <div>
-          <h2>{{ item.titulo }}</h2>
-          <p>{{ item.resenha }}</p>
-          <strong>R$ {{ item.preco.toFixed(2) }}</strong>
+          <div>
+            <h2>{{ item.titulo }}</h2>
+            <p>{{ item.resenha }}</p>
+            <strong>R${{ item.preco }}</strong>
+          </div>
         </div>
-        </div>
-          
-        <div>
+
+        <div class="contador">
           <button @click="decrementar(item)">-</button>
           <strong>{{ item.quantidade }}</strong>
           <button @click="incrementar(item)">+</button>
         </div>
-        <strong class="preço">{{ (item.preco * item.quantidade).toFixed(2) }}</strong>
+        <strong class="preco">{{ (item.preco * item.quantidade).toFixed(2) }}</strong>
       </div>
+      <button class="butao">Voltar para loja</button>
+      <ul class="principal">
+        <li class="cupom">
+          <input type="text" placeholder="Código do Cupom" name="search">
+          <button type="submit">Inserir Cupom</button>
+        </li>
+        <li class="totalC">
+          <h2>Total da Compra</h2>
+          <div class="maior">
+            <div>
+              <p>Produtos:</p>
+              <strong>{{ quantidadeCarrinho() }}</strong>
+            </div>
+            <div class="border">
+              <p>Frete:</p>
+              <strong>Gratis</strong>
+            </div>
+            <div>
+              <p>Total:</p>
+              <strong>R$ {{ totalCarrinho() }}</strong>
+            </div>
+          </div>
+          <button>Ir Para o Pagamento</button>
+        </li>
+      </ul>
     </section>
   </body>
   <footer>
@@ -416,44 +465,112 @@ section.carrinho div.titulos {
   border-bottom: 2px solid #27AE60;
 
 }
+
 section.carrinho div.itensCarrinhos {
   display: flex;
-  margin: 4vw 8vw 4vw 8vw ;
+  justify-content: space-between;
+  margin: 4vw 8vw 4vw 8vw;
   border-bottom: 1px solid grey;
   padding-bottom: 3vw;
-  justify-content: space-between;
+  
 }
+
 section.carrinho div.itensCarrinhos div.tit {
   display: flex;
 }
+.carrinho div.carrinhoMaior {
+display: flex;
+margin: 0 30vw 0 0;
+}
+.carrinho div.carrinhoMaior div {
+ margin: 2vw;
+}
 .carrinho div.itensCarrinhos img {
-  width: 1vw;
+  width: 15%;
+  height: 90%;
+  border-radius: 4px;
+}
+.carrinho div.contador {
+border: 1px solid;
+margin: 1vw 5vw 0 0;
+padding: 1vw 2vw;
+font-size: 1.4rem;
+border-radius: 4px;
+}
+.carrinho div.contador button {
+border: none;
+background-color: white;
+font-size: 1.4rem;
+}
+.carrinho strong.preco {
+font-size: 2rem;
+margin: 3vw 0 0 0;
+}
+.carrinho button.butao {
+  background-color: white;
+  border: 1px solid grey;
+  border-radius: 4px;
+  padding: 1vw 2.5vw;
+  font-size: 1.2rem;
+  margin-left: 9vw;
 }
 
-.carrinhos div {
-  
+.carrinho ul.principal {
+  display: flex;
+  justify-content: space-between;
+  margin: 3vw 0 10vw 0;
 }
 
-.carrinhos h2 {
-  
+.carrinho ul li.cupom {
+  margin: 2vw 0 0 6.8vw;
 }
 
-.carrinhos p {
-  
+.carrinho ul li.cupom input {
+  padding: 1vw 3vw;
+  font-size: 1.2rem;
+  border: 1px solid black;
+  border-radius: 4px;
 }
 
-.carrinhos strong {
-  
+.carrinho ul li.cupom button {
+  background-color: #27AE60;
+  border: none;
+  padding: 1vw 3vw;
+  border-radius: 4px;
+  margin-left: 2vw;
+  color: white;
+  font-size: 1.3rem;
+}
+.carrinho ul li.totalC {
+border: 1px solid;
+border-radius: 4px;
+margin: 2vw 8vw 0 0;
+padding: 1vw 1vw 0 1vw;
+font-size: 1.1rem;
+padding: 0vw 2vw;
+}
+.carrinho div.maior div {
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 0vw ;
+
+}
+.carrinho ul li.totalC button {
+background-color: #27AE60;
+color: white;
+font-size: 1.2rem;
+border: none;
+padding: 1vw 3vw;
+margin: 2vw;
+border-radius: 4px;
 }
 
-.carrinhos div button {
- 
+.carrinho .border {
+border-bottom: 1px solid grey;
+border-top: 1px solid grey;
 }
-
-
-.carrinhos .preço {
-  
-}
+.carrinhos .preço {}
 
 
 /*SECTION AUTOR*/
