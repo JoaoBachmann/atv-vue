@@ -81,9 +81,15 @@ const carrinho = reactive({
   ]
 });
 
+function remover(a, id) {
+  let posicaoItem = a.findIndex(objeto => objeto.id == id)
+  a.splice(posicaoItem, 1)
+}
 function decrementar(item) {
   if (item.quantidade > 1) {
     item.quantidade--
+  } else {
+    remover(carrinho.items, item.id)
   }
 }
 
@@ -99,18 +105,15 @@ function totalCarrinho() {
   for (let item of carrinho.items) {
     total += item.preco * item.quantidade;
   }
-  return total.toFixed(2);
+  return total.toFixed(2).replace(".",",");
 }
 function quantidadeCarrinho() {
-  let quanti = 0;
+  let qtd = 0;
   for (let item of carrinho.items) {
-    quanti += item.quantidade;
+    qtd += item.quantidade;
   }
-  return quanti;
+  return qtd;
 }
-
-
-
 
 </script>
 
@@ -185,15 +188,15 @@ function quantidadeCarrinho() {
 
     <section class="opcoes">
       <div class="linha">
-        <span class="fa-solid fa-truck"></span>
+        <i class="fa-solid fa-truck"></i>
         <p>Frete grátis para SC</p>
       </div>
       <div class="linha">
-        <span class="fa-solid fa-star"></span>
+        <i class="fa-solid fa-star"></i>
         <p>Livros recomendados</p>
       </div>
       <div>
-        <span class="fa-solid fa-book-open"></span>
+        <i class="fa-solid fa-book-open"></i>
         <p>Mais vendidos</p>
       </div>
     </section>
@@ -203,7 +206,7 @@ function quantidadeCarrinho() {
         <img :src="produto.capa" alt="" width="100%" height="100%" />
         <h2>{{ produto.titulo }}</h2>
         <p class="res">{{ produto.resenha }}</p>
-        <strong>R$ {{ produto.preco.toFixed(2) }}</strong>
+        <strong>R$ {{ produto.preco.toFixed(2).replace(".",",") }}</strong>
         <br>
         <button class="compra" @click="adicionar(produto)">
           <i class="fa-solid fa-cart-shopping"></i>
@@ -230,7 +233,7 @@ function quantidadeCarrinho() {
           <div>
             <h2>{{ item.titulo }}</h2>
             <p>{{ item.resenha }}</p>
-            <strong>R${{ item.preco }}</strong>
+            <strong>R${{ item.preco.toFixed(2).replace(".",",") }}</strong>
           </div>
         </div>
 
@@ -239,7 +242,7 @@ function quantidadeCarrinho() {
           <strong>{{ item.quantidade }}</strong>
           <button @click="incrementar(item)">+</button>
         </div>
-        <strong class="preco">{{ (item.preco * item.quantidade).toFixed(2) }}</strong>
+        <strong class="preco">{{ (item.preco * item.quantidade).toFixed(2).replace(".",",") }}</strong>
       </div>
       <button class="butao">Voltar para loja</button>
       <ul class="principal">
