@@ -61,23 +61,6 @@ const produtos = reactive([
 
 const carrinho = reactive({
   items: [
-    {
-      id: 1,
-      titulo: 'Chain of Iron: Volume 2',
-      resenha: 'Cassandra Clare',
-      preco: 23.24,
-      capa: 'https://cdn.kobo.com/book-images/6db37b19-2d7d-4e5b-a1d8-b006188c9db4/1200/1200/False/the-last-hours-chain-of-iron.jpg',
-      quantidade: 1,
-    },
-    {
-      id: 2,
-      titulo: 'Chain of Iron: Volume 2',
-      resenha: 'Cassandra Clare',
-      preco: 23.24,
-      capa: 'https://cdn.kobo.com/book-images/6db37b19-2d7d-4e5b-a1d8-b006188c9db4/1200/1200/False/the-last-hours-chain-of-iron.jpg',
-      quantidade: 1,
-    },
-
   ]
 });
 
@@ -105,14 +88,7 @@ function totalCarrinho() {
   for (let item of carrinho.items) {
     total += item.preco * item.quantidade;
   }
-  return total.toFixed(2).replace(".",",");
-}
-function quantidadeCarrinho() {
-  let qtd = 0;
-  for (let item of carrinho.items) {
-    qtd += item.quantidade;
-  }
-  return qtd;
+  return total.toFixed(2).replace(".", ",");
 }
 
 </script>
@@ -206,12 +182,13 @@ function quantidadeCarrinho() {
         <img :src="produto.capa" alt="" width="100%" height="100%" />
         <h2>{{ produto.titulo }}</h2>
         <p class="res">{{ produto.resenha }}</p>
-        <strong>R$ {{ produto.preco.toFixed(2).replace(".",",") }}</strong>
+        <strong>R$ {{ produto.preco.toFixed(2).replace(".", ",") }}</strong>
         <br>
         <button class="compra" @click="adicionar(produto)">
           <i class="fa-solid fa-cart-shopping"></i>
           <p>comprar</p>
         </button>
+        
       </div>
     </section>
     <section class="carrinho">
@@ -227,22 +204,21 @@ function quantidadeCarrinho() {
           subtotal
         </h2>
       </div>
-      <div v-for="item in carrinho.items" :key="item.id" class="itensCarrinhos">
-        <div class="carrinhoMaior">
-          <img :src="item.capa" alt="">
+      <div v-for="item in carrinho.items" :key="item.id" class="  itensCarrinhos">
+        <div class="maior">
+          <img class="imgCarrinho" :src="item.capa" alt="">
           <div>
             <h2>{{ item.titulo }}</h2>
             <p>{{ item.resenha }}</p>
-            <strong>R${{ item.preco.toFixed(2).replace(".",",") }}</strong>
+            <strong>R${{ item.preco.toFixed(2).replace(".", ",") }}</strong>
           </div>
         </div>
-
         <div class="contador">
           <button @click="decrementar(item)">-</button>
           <strong>{{ item.quantidade }}</strong>
           <button @click="incrementar(item)">+</button>
         </div>
-        <strong class="preco">{{ (item.preco * item.quantidade).toFixed(2).replace(".",",") }}</strong>
+        <strong class="preco">R${{ (item.preco * item.quantidade).toFixed(2).replace(".", ",") }}</strong>
       </div>
       <button class="butao">Voltar para loja</button>
       <ul class="principal">
@@ -252,10 +228,10 @@ function quantidadeCarrinho() {
         </li>
         <li class="totalC">
           <h2>Total da Compra</h2>
-          <div class="maior">
+          <div class="maiorFinal">
             <div>
               <p>Produtos:</p>
-              <strong>{{ quantidadeCarrinho() }}</strong>
+              <strong>{{ carrinho.items.length }}</strong>
             </div>
             <div class="border">
               <p>Frete:</p>
@@ -469,36 +445,52 @@ section.carrinho div.titulos {
 
 }
 
-section.carrinho div.itensCarrinhos {
+.itensCarrinhos {
   display: flex;
   justify-content: space-between;
   margin: 4vw 8vw 4vw 8vw;
   border-bottom: 1px solid grey;
-  padding-bottom: 3vw;
-  
 }
-
-section.carrinho div.itensCarrinhos div.tit {
+section.carrinho .maior {
+  max-width: 30%;
   display: flex;
+  margin-bottom: 3vw;
 }
-.carrinho div.carrinhoMaior {
-display: flex;
-margin: 0 30vw 0 0;
+section.carrinho .maior div {
+  margin: 2vw;
 }
-.carrinho div.carrinhoMaior div {
- margin: 2vw;
-}
-.carrinho div.itensCarrinhos img {
-  width: 15%;
-  height: 90%;
+.imgCarrinho {
+  width: 8vw;
+  height: 12vw;
   border-radius: 4px;
+}
+section.carrinho .maior div h2 {
+  font-size: 2rem;
+  margin-top: 0;
+}
+section.carrinho .maior div p {
+  color: gray;
+}
+section.carrinho .maior div strong {
+  font-size: 2rem;
+  margin-top: 2px;
 }
 .carrinho div.contador {
 border: 1px solid;
-margin: 1vw 5vw 0 0;
+margin: 1vw 18vw 0 0;
 padding: 1vw 2vw;
 font-size: 1.4rem;
 border-radius: 4px;
+max-height: 1.5vw;
+}
+.carrinho div.contador button {
+border: none;
+background-color: white;
+font-size: 1.4rem;
+}
+.carrinho strong.preco {
+font-size: 2rem;
+margin: 3vw 0 0 0;
 }
 .carrinho div.contador button {
 border: none;
@@ -517,24 +509,20 @@ margin: 3vw 0 0 0;
   font-size: 1.2rem;
   margin-left: 9vw;
 }
-
 .carrinho ul.principal {
   display: flex;
   justify-content: space-between;
   margin: 3vw 0 10vw 0;
 }
-
 .carrinho ul li.cupom {
   margin: 2vw 0 0 6.8vw;
 }
-
 .carrinho ul li.cupom input {
   padding: 1vw 3vw;
   font-size: 1.2rem;
   border: 1px solid black;
   border-radius: 4px;
 }
-
 .carrinho ul li.cupom button {
   background-color: #27AE60;
   border: none;
@@ -552,7 +540,7 @@ padding: 1vw 1vw 0 1vw;
 font-size: 1.1rem;
 padding: 0vw 2vw;
 }
-.carrinho div.maior div {
+.carrinho div.maiorFinal div {
 display: flex;
 align-items: center;
 justify-content: space-between;
@@ -568,14 +556,10 @@ padding: 1vw 3vw;
 margin: 2vw;
 border-radius: 4px;
 }
-
 .carrinho .border {
 border-bottom: 1px solid grey;
 border-top: 1px solid grey;
 }
-.carrinhos .preço {}
-
-
 /*SECTION AUTOR*/
 
 .autorL {
