@@ -1,5 +1,6 @@
 <script setup>
 import { ref, reactive, computed } from "vue";
+const booleano = ref(true);
 const produtos = reactive([
   {
     id: 1,
@@ -68,6 +69,7 @@ function remover(a, id) {
   let posicaoItem = a.findIndex(objeto => objeto.id == id)
   a.splice(posicaoItem, 1)
 }
+
 function decrementar(item) {
   if (item.quantidade > 1) {
     item.quantidade--
@@ -77,8 +79,13 @@ function decrementar(item) {
 }
 
 function incrementar(item) {
-  item.quantidade++
+  if (item.quantidade < 100) {
+    item.quantidade++
+  } else {
+    item.quantidade == 1;
+  }
 }
+
 function adicionar(item) {
   carrinho.items.push({ ...item, quantidade: 1 })
 }
@@ -91,6 +98,14 @@ function totalCarrinho() {
   return total.toFixed(2).replace(".", ",");
 }
 
+function arredondar(item) {
+  if (item.quantidade > 100) {
+    item.quantidade = 100;
+  }
+  if ( item.quantidade < 0) {
+    item.quantidade = 1
+  }
+}
 </script>
 
 <template>
@@ -104,8 +119,8 @@ function totalCarrinho() {
       </p>
     </div>
     <div class="barra-pesquisa">
-      <i class="fas fa-search icone-pesquisa"></i>
-      <input type="text" placeholder="Pesquisar...">
+      <input type="text" placeholder="Código do Cupom" name="search">
+      <button type="submit" class="fas fa-search icone-pesquisa"></button>
     </div>
     <div>
       <ul class="page">
@@ -126,7 +141,7 @@ function totalCarrinho() {
     <div>
       <ul class="icon">
         <li>
-          <i class="fa-solid fa-cart-shopping"></i>
+          <i class="fa-solid fa-cart-shopping" @click="booleano = !booleano"></i>
         </li>
         <li class="icone">
           <i class="fa-solid fa-heart"></i>
@@ -142,7 +157,7 @@ function totalCarrinho() {
   <body>
 
 
-    <section class="autorL">
+    <section class="autorL" v-if="booleano">
       <div class="sobreA">
         <p class="autor">Autor de Abril</p>
         <h2 class="negrito">Eric-Emanuel Schmitt</h2>
@@ -162,7 +177,7 @@ function totalCarrinho() {
       </div>
     </section>
 
-    <section class="opcoes">
+    <section class="opcoes" v-if="booleano">
       <div class="linha">
         <i class="fa-solid fa-truck"></i>
         <p>Frete grátis para SC</p>
@@ -176,7 +191,8 @@ function totalCarrinho() {
         <p>Mais vendidos</p>
       </div>
     </section>
-    <section class="listalivros">
+
+    <section class="listalivros" v-if="booleano">
       <h1>Lista de Livros</h1>
       <div v-for="produto in produtos" :key="produto.id" class="livro">
         <img :src="produto.capa" alt="" width="100%" height="100%" />
@@ -184,14 +200,14 @@ function totalCarrinho() {
         <p class="res">{{ produto.resenha }}</p>
         <strong>R$ {{ produto.preco.toFixed(2).replace(".", ",") }}</strong>
         <br>
-        <button class="compra" @click="adicionar(produto)">
+        <button class="compra" @click="adicionar(produto), booleano = !booleano">
           <i class="fa-solid fa-cart-shopping"></i>
           <p>comprar</p>
         </button>
-        
+
       </div>
     </section>
-    <section class="carrinho">
+    <section class="carrinho" v-else>
       <h1>Carrinho</h1>
       <div class="titulos">
         <h2>
@@ -215,12 +231,12 @@ function totalCarrinho() {
         </div>
         <div class="contador">
           <button @click="decrementar(item)">-</button>
-          <strong>{{ item.quantidade }}</strong>
+          <input type="number" min="1" v-model.number="item.quantidade" @change="arredondar(item)">
           <button @click="incrementar(item)">+</button>
         </div>
         <strong class="preco">R${{ (item.preco * item.quantidade).toFixed(2).replace(".", ",") }}</strong>
       </div>
-      <button class="butao">Voltar para loja</button>
+      <button class="butao" @click="booleano = true">Voltar para loja</button>
       <ul class="principal">
         <li class="cupom">
           <input type="text" placeholder="Código do Cupom" name="search">
@@ -290,10 +306,8 @@ li {
 
 * {
   font-family: 'SuaFonte', sans-serif;
-  /* Substitua 'SuaFonte' pela fonte que você quer */
 }
 
-/* Garantindo que os ícones Font Awesome usem sua própria fonte */
 i,
 .fa {
   font-family: 'Font Awesome 5 Free', 'Font Awesome 5 Free Solid', 'FontAwesome', sans-serif !important;
@@ -330,28 +344,26 @@ div.titulo p.dois {
 .barra-pesquisa {
   position: relative;
   width: 300px;
+  display: flex;
 }
 
 .barra-pesquisa input {
   width: 100%;
-  padding: 10px 10px 10px 35px;
+  padding: 10px 10px 10px 20px;
   /* espaço para o ícone */
   font-size: 16px;
   border: none;
-  border-radius: 4px;
-  margin: 1.5vw 0 0 0;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: ;
+  margin: 1.5vw 0 1vw 0;
   background-color: #F1F1F1;
+  outline: none;
 }
 
 .icone-pesquisa {
-  position: absolute;
-  top: 50%;
-  left: 17vw;
-  margin: 6px 0 0 0;
-  transform: translateY(-50%);
-  color: #888;
-  font-size: 16px;
-  pointer-events: none;
+  font-family: 'Font Awesome 5 Free', 'Font Awesome 5 Free Solid', 'FontAwesome', sans-serif !important;
+  margin: 1.5vw 1px 1vw 0;
+  border: none;
 }
 
 /*paginazinhas*/
@@ -412,7 +424,6 @@ section.listalivros .livro p.res {
   color: #7B7881;
 }
 
-section.listalivros .livro strong {}
 
 section.listalivros .livro .compra {
   background-color: #27AE60;
@@ -434,7 +445,7 @@ section.listalivros .livro .compra {
 section.carrinho h1 {
   color: #27AE60;
   font-size: 3.5rem;
-  margin: 0 0 0 7vw;
+  margin: 3vw 0 0 7vw;
 }
 
 section.carrinho div.titulos {
@@ -451,56 +462,76 @@ section.carrinho div.titulos {
   margin: 4vw 8vw 4vw 8vw;
   border-bottom: 1px solid grey;
 }
+
 section.carrinho .maior {
   max-width: 30%;
   display: flex;
   margin-bottom: 3vw;
 }
+
 section.carrinho .maior div {
   margin: 2vw;
 }
+
 .imgCarrinho {
   width: 8vw;
   height: 12vw;
   border-radius: 4px;
 }
+
 section.carrinho .maior div h2 {
   font-size: 2rem;
   margin-top: 0;
 }
+
 section.carrinho .maior div p {
   color: gray;
 }
+
 section.carrinho .maior div strong {
   font-size: 2rem;
   margin-top: 2px;
 }
+
 .carrinho div.contador {
-border: 1px solid;
-margin: 1vw 18vw 0 0;
-padding: 1vw 2vw;
-font-size: 1.4rem;
-border-radius: 4px;
-max-height: 1.5vw;
+  border: 1px solid;
+  margin: 1vw 18vw 0 0;
+  padding: 1vw 2vw;
+  font-size: 1.4rem;
+  border-radius: 4px;
+  max-height: 1.5vw;
 }
-.carrinho div.contador button {
-border: none;
-background-color: white;
-font-size: 1.4rem;
+
+.carrinho div.contador input {
+  border: none;
+  background-color: white;
+  font-size: 1.4rem;
+  width: 2vw;
+  text-align: center;
 }
+
+.carrinho .contador input::-webkit-inner-spin-button,
+.input-quantidade::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 .carrinho strong.preco {
-font-size: 2rem;
-margin: 3vw 0 0 0;
+  font-size: 2rem;
+  margin: 3vw 0 0 0;
 }
+
 .carrinho div.contador button {
-border: none;
-background-color: white;
-font-size: 1.4rem;
+  border: none;
+  background-color: white;
+  font-size: 1.4rem;
 }
+
 .carrinho strong.preco {
-font-size: 2rem;
-margin: 3vw 0 0 0;
+  font-size: 2rem;
+  margin: 3vw 0 0 0;
 }
+
 .carrinho button.butao {
   background-color: white;
   border: 1px solid grey;
@@ -508,21 +539,26 @@ margin: 3vw 0 0 0;
   padding: 1vw 2.5vw;
   font-size: 1.2rem;
   margin-left: 9vw;
+  margin-top: 2vw;
 }
+
 .carrinho ul.principal {
   display: flex;
   justify-content: space-between;
   margin: 3vw 0 10vw 0;
 }
+
 .carrinho ul li.cupom {
   margin: 2vw 0 0 6.8vw;
 }
+
 .carrinho ul li.cupom input {
   padding: 1vw 3vw;
   font-size: 1.2rem;
   border: 1px solid black;
   border-radius: 4px;
 }
+
 .carrinho ul li.cupom button {
   background-color: #27AE60;
   border: none;
@@ -532,34 +568,39 @@ margin: 3vw 0 0 0;
   color: white;
   font-size: 1.3rem;
 }
+
 .carrinho ul li.totalC {
-border: 1px solid;
-border-radius: 4px;
-margin: 2vw 8vw 0 0;
-padding: 1vw 1vw 0 1vw;
-font-size: 1.1rem;
-padding: 0vw 2vw;
+  border: 1px solid;
+  border-radius: 4px;
+  margin: 2vw 8vw 0 0;
+  padding: 1vw 1vw 0 1vw;
+  font-size: 1.1rem;
+  padding: 0vw 2vw;
 }
+
 .carrinho div.maiorFinal div {
-display: flex;
-align-items: center;
-justify-content: space-between;
-padding: 0vw ;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0vw;
 
 }
+
 .carrinho ul li.totalC button {
-background-color: #27AE60;
-color: white;
-font-size: 1.2rem;
-border: none;
-padding: 1vw 3vw;
-margin: 2vw;
-border-radius: 4px;
+  background-color: #27AE60;
+  color: white;
+  font-size: 1.2rem;
+  border: none;
+  padding: 1vw 3vw;
+  margin: 2vw;
+  border-radius: 4px;
 }
+
 .carrinho .border {
-border-bottom: 1px solid grey;
-border-top: 1px solid grey;
+  border-bottom: 1px solid grey;
+  border-top: 1px solid grey;
 }
+
 /*SECTION AUTOR*/
 
 .autorL {
@@ -595,8 +636,10 @@ border-top: 1px solid grey;
   font-size: 1.1vw;
   background-color: #27ae60;
   color: white;
-  border-color: #27ae60;
+  border: none;
   padding: 20px;
+  border-radius: 4px;
+
 }
 
 /*DIV FOTO LIVRO*/
